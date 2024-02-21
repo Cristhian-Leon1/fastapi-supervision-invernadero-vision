@@ -1,9 +1,10 @@
 import uvicorn
-from fastapi import FastAPI
-from routes.rutas_invernadero import get_router
-from mongoDB.conexion_mongo import establecer_conexion
-from routes.rutas_vision import router as vision_router
+from fastapi import FastAPI, WebSocket
+from backend.routes.rutas_invernadero import get_router
+from backend.mongoDB.conexion_mongo import establecer_conexion
+from backend.routes.rutas_vision import router as vision_router
 from fastapi.middleware.cors import CORSMiddleware
+from webSocket.websocket import websocket_endpoint  # Importa la función del WebSocket
 
 sensores_collection = None
 
@@ -16,6 +17,8 @@ app.add_middleware(
     allow_methods=["*"],  # Permitir todos los métodos (GET, POST, etc.)
     allow_headers=["*"],  # Permitir todos los encabezados
 )
+
+app.websocket("/ws")(websocket_endpoint)  # Agrega la ruta del WebSocket
 
 
 def start_application():
