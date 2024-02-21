@@ -23,8 +23,3 @@ def start_application():
     sensores_collection = establecer_conexion()
     app.include_router(get_router(sensores_collection), prefix="/api")
     app.include_router(vision_router, prefix="/vision", tags=["vision"])
-
-
-if __name__ == "__main__":
-    start_application()
-    uvicorn.run(app, host="127.0.0.1", port=5000)
