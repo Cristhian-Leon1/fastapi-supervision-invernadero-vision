@@ -1,8 +1,8 @@
 import uvicorn
 from fastapi import FastAPI, WebSocket
-from backend.routes.rutas_invernadero import get_router
-from backend.mongoDB.conexion_mongo import establecer_conexion
-from backend.routes.rutas_vision import router as vision_router
+from routes.rutas_invernadero import get_router
+from mongoDB.conexion_mongo import establecer_conexion
+from routes.rutas_vision import router as vision_router
 from fastapi.middleware.cors import CORSMiddleware
 from webSocket.websocket import websocket_endpoint  # Importa la función del WebSocket
 
