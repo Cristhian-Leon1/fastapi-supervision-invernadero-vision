@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
-from backend.models.modelo_invernadero import InvernaderoDataModel
-from backend.controllers.controladores_invernadero import (create_sensor_data, get_sensor_byID, get_all_sensor_data,
+from models.modelo_invernadero import InvernaderoDataModel
+from controllers.controladores_invernadero import (create_sensor_data, get_sensor_byID, get_all_sensor_data,
                                                            delete_sensor_byID, update_sensor_byID,
                                                            delete_all_sensor_data, get_last_20_sensor_data)
 

@@ -2,7 +2,7 @@ from pymongo.errors import PyMongoError
 from pymongo.collection import Collection
 from typing import List
 from datetime import datetime
-from backend.models.modelo_invernadero import InvernaderoDataModel
+from models.modelo_invernadero import InvernaderoDataModel
 
 
 # Crear registro
