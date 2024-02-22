@@ -2,7 +2,6 @@ from typing import List
 from fastapi import WebSocket
 from starlette.websockets import WebSocketDisconnect
 
-
 # Variable booleana inicial
 estado = False
 
@@ -27,16 +26,15 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_text()
-            print('Mensaje recibido:', data)  # Imprimir el mensaje recibido en consola
+            print('Mensaje recibido:', data)
 
-            # Cambiar el estado de acuerdo al mensaje recibido
             estado = not estado
 
             print('estado:', estado)
 
-            # Enviar el nuevo estado a todos los clientes
             for cliente in clientes:
                 await enviar_estado(cliente)
     except WebSocketDisconnect:
         print('Cliente desconectado')
         clientes.remove(websocket)
+        estado = False
