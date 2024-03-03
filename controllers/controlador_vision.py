@@ -1,6 +1,8 @@
 import cv2
 import base64
 
+proporcion = 11.628787878787879
+
 
 def procesar_imagen_base64(imagen_original):
     lista_imagenes = []
@@ -27,6 +29,12 @@ def procesar_imagen_base64(imagen_original):
         mayor_contorno_hoja = max(contornos_hojas, key=cv2.contourArea)
         x2, y2, ancho_hoja, largo_hoja = cv2.boundingRect(mayor_contorno_hoja)
 
+        ancho_hoja_pixeles = ancho_hoja * proporcion
+        largo_hoja_pixeles = largo_hoja * proporcion
+
+        ancho_centimetros = (ancho_hoja_pixeles * 13.5) / 3070
+        largo_centimetros = (largo_hoja_pixeles * 28.2) / 4080
+
         recorte_planta = imagen_copia[y1:y1 + largo_planta, x1:x1 + ancho_planta].copy()
         lista_imagenes.append(recorte_planta)
         recorte_hoja = imagen_copia[y1:y1 + largo_planta, x1:x1 + ancho_planta].copy()
@@ -39,7 +47,7 @@ def procesar_imagen_base64(imagen_original):
             imagen_base64 = base64.b64encode(buffer).decode('utf-8')
             lista_base64.append(imagen_base64)
 
-        return ancho_hoja, largo_hoja, lista_base64[0], lista_base64[1]
+        return ancho_centimetros, largo_centimetros, lista_base64[0], lista_base64[1]
 
     except Exception as e:
         print(f"Ocurrió un error al procesar la imagen: {e}")
