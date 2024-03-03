@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from click import File
 from fastapi import APIRouter, HTTPException, UploadFile
-from backend.controllers.controlador_vision import procesar_imagen_base64
+from controllers.controlador_vision import procesar_imagen_base64
 
 router = APIRouter()
 
