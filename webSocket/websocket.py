@@ -28,7 +28,10 @@ async def websocket_endpoint(websocket: WebSocket):
             data = await websocket.receive_text()
             print('Mensaje recibido:', data)
 
-            estado = not estado
+            if data == 'Encender valvula 1':
+                estado = True
+            elif data == 'Apagar valvula 1':
+                estado = False
 
             print('estado:', estado)
 
