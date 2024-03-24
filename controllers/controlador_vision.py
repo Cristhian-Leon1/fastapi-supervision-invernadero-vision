@@ -2,7 +2,7 @@ from ultralytics import YOLO
 import cv2
 import base64
 
-model = YOLO('cv-medida-hojas_v1.pt')
+model = YOLO('cv-medidas_hojas_vS.pt')
 
 
 def procesar_imagen_base64(imagen_frontend):
