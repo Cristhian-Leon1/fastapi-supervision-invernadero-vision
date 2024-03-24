@@ -1,46 +1,48 @@
+from ultralytics import YOLO
 import cv2
 import base64
 
-proporcion = 11.628787878787879
+model = YOLO('../models/vision/cv-medida-hojas_v1.pt')
 
 
-def procesar_imagen_base64(imagen_original):
+def procesar_imagen_base64(imagen_frontend):
+    largo_centimetros, ancho_centimetros = 0, 0
     lista_imagenes = []
     lista_base64 = []
     try:
-        imagen_original = cv2.resize(imagen_original, (264, 350))
-        imagen_copia = imagen_original.copy()
+        imagen_copia = imagen_frontend.copy()
 
-        canal_azul, canal_verde, canal_rojo = cv2.split(imagen_original)
-        _, umbral_verde_planta = cv2.threshold(canal_verde, 200, 255, cv2.THRESH_BINARY)
-        contornos_planta, _ = cv2.findContours(umbral_verde_planta, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        mayor_contorno_planta = max(contornos_planta, key=cv2.contourArea)
-        x1, y1, ancho_planta, largo_planta = cv2.boundingRect(mayor_contorno_planta)
+        results = model(imagen_copia)
+        for result in results:
+            boxes = result.boxes
 
-        imagen_recortada = imagen_copia[y1:y1 + largo_planta, x1:x1 + ancho_planta].copy()
-        imagen_recortada_proceso = cv2.GaussianBlur(imagen_recortada, (3, 3), 0)
+            mejor_conf = boxes.conf.max()
+            mejor_conf_index = boxes.conf.argmax()
+            mejor_xyxy = boxes.xyxy[mejor_conf_index]
+            mejor_xyxy_list = mejor_xyxy.tolist()
 
-        if ancho_planta > 190 or largo_planta > 130:
-            _, umbral_recorte = cv2.threshold(imagen_recortada_proceso[:, :, 2], 186, 255, cv2.THRESH_BINARY)
-        else:
-            _, umbral_recorte = cv2.threshold(imagen_recortada_proceso[:, :, 1], 235, 255, cv2.THRESH_BINARY)
+            imamen_deteccion = cv2.rectangle(imagen_frontend,
+                                             (int(mejor_xyxy_list[0]), int(mejor_xyxy_list[1])),
+                                             (int(mejor_xyxy_list[2]), int(mejor_xyxy_list[3])),
+                                             (0, 0, 255), 4)
 
-        contornos_hojas, _ = cv2.findContours(umbral_recorte, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        mayor_contorno_hoja = max(contornos_hojas, key=cv2.contourArea)
-        x2, y2, ancho_hoja, largo_hoja = cv2.boundingRect(mayor_contorno_hoja)
+            lista_imagenes.append(imamen_deteccion)
 
-        ancho_hoja_pixeles = ancho_hoja * proporcion
-        largo_hoja_pixeles = largo_hoja * proporcion
+            print('Mejor confianza:', mejor_conf)
+            print('Mejor xyxy:', mejor_xyxy_list)
 
-        ancho_centimetros = (ancho_hoja_pixeles * 13.5) / 3070
-        largo_centimetros = (largo_hoja_pixeles * 28.2) / 4080
+            imagen_recorte = imagen_copia[int(mejor_xyxy_list[1]):int(mejor_xyxy_list[3]),
+                                            int(mejor_xyxy_list[0]):int(mejor_xyxy_list[2])]
+            lista_imagenes.append(imagen_recorte)
 
-        recorte_planta = imagen_copia[y1:y1 + largo_planta, x1:x1 + ancho_planta].copy()
-        lista_imagenes.append(recorte_planta)
-        recorte_hoja = imagen_copia[y1:y1 + largo_planta, x1:x1 + ancho_planta].copy()
-        planta_recorte_hoja = cv2.rectangle(recorte_hoja, (x2, y2), (x2 + ancho_hoja, y2 + largo_hoja),
-                                            (255, 255, 255), 2)
-        lista_imagenes.append(planta_recorte_hoja)
+            ancho_pixeles = abs(mejor_xyxy_list[2] - mejor_xyxy_list[0])
+            largo_pixeles = abs(mejor_xyxy_list[3] - mejor_xyxy_list[1])
+
+            ancho_pixeles_original = ancho_pixeles * 3.9
+            largo_pixeles_original = largo_pixeles * 3.9
+
+            ancho_centimetros = (ancho_pixeles_original * 13.5) / 3070
+            largo_centimetros = (largo_pixeles_original * 18.2) / 4080
 
         for imagen in lista_imagenes:
             _, buffer = cv2.imencode('.jpg', imagen)
