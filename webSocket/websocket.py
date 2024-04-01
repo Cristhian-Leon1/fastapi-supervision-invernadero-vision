@@ -27,12 +27,10 @@ async def websocket_endpoint(websocket: WebSocket):
 
             if data == 'Encender valvula 1':
                 estado_valvula1 = True
-            elif data == 'Apagar valvula 1':
-                estado_valvula1 = False
-            elif data == 'Encender valvula 2':
-                estado_valvula2 = True
-            elif data == 'Apagar valvula 2':
                 estado_valvula2 = False
+            else:
+                estado_valvula2 = True
+                estado_valvula1 = False
 
             for cliente in clientes:
                 await enviar_estado(cliente)
