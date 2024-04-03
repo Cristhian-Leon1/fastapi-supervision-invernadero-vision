@@ -1,6 +1,7 @@
 from pymongo.errors import PyMongoError
 from pymongo.collection import Collection
 from typing import List
+from pytz import timezone
 from datetime import datetime
 from models.modelo_invernadero import InvernaderoDataModel
 
@@ -11,7 +12,8 @@ def create_sensor_data(sensor_data: InvernaderoDataModel, collection: Collection
         sensor_data_dict = sensor_data.model_dump()
 
         if sensor_data_dict["timestamp"] is None:
-            sensor_data_dict["timestamp"] = datetime.now()
+            colombia_tz = timezone('America/Bogota')
+            sensor_data_dict["timestamp"] = datetime.now(colombia_tz)
             sensor_data_dict["timestamp"] = sensor_data_dict["timestamp"].strftime("%Y-%m-%d %H:%M:%S")
         sensor_data_dict["_id"] = collection.count_documents({}) + 1
 
