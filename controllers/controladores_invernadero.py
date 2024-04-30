@@ -99,6 +99,18 @@ def get_last_20_sensor_data(collection: Collection) -> List[InvernaderoDataModel
         print(e)
         return []
 
+# Leer el último registro
+def get_last_sensor_data(collection: Collection) -> InvernaderoDataModel | Type[InvernaderoDataModel]:
+    try:
+        sensor_data = collection.find().sort([("_id", -1)]).limit(1)[0]
+        for key in sensor_data:
+            if sensor_data[key] is None:
+                sensor_data[key] = 0.0
+
+        return InvernaderoDataModel(**sensor_data)
+    except Exception as e:
+        print(e)
+        return InvernaderoDataModel
 
 # Eliminar registro por ID
 def delete_sensor_byID(sensor_id: str, collection: Collection) -> dict:
