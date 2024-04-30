@@ -59,6 +59,9 @@ def get_sensor_byID(sensor_id: str, collection: Collection):
 
         sensor_data = collection.find_one({"_id": sensor_id_num})
         if sensor_data:
+            for key in sensor_data:
+                if sensor_data[key] is None:
+                    sensor_data[key] = 0.0
             return InvernaderoDataModel(**sensor_data)
         else:
             return None
@@ -71,6 +74,10 @@ def get_sensor_byID(sensor_id: str, collection: Collection):
 def get_all_sensor_data(collection: Collection) -> List[InvernaderoDataModel]:
     try:
         sensor_data_list = list(collection.find())
+        for sensor_data in sensor_data_list:
+            for key in sensor_data:
+                if sensor_data[key] is None:
+                    sensor_data[key] = 0.0
 
         return [InvernaderoDataModel(**sensor_data) for sensor_data in sensor_data_list]
     except Exception as e:
@@ -82,6 +89,10 @@ def get_all_sensor_data(collection: Collection) -> List[InvernaderoDataModel]:
 def get_last_20_sensor_data(collection: Collection) -> List[InvernaderoDataModel]:
     try:
         sensor_data_list = list(collection.find().sort([("_id", -1)]).limit(20))
+        for sensor_data in sensor_data_list:
+            for key in sensor_data:
+                if sensor_data[key] is None:
+                    sensor_data[key] = 0.0
 
         return [InvernaderoDataModel(**sensor_data) for sensor_data in sensor_data_list]
     except Exception as e:
