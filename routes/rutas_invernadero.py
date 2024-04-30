@@ -2,8 +2,9 @@ from fastapi import APIRouter, HTTPException
 from typing import List
 from models.modelo_invernadero import InvernaderoDataModel
 from controllers.controladores_invernadero import (create_sensor_data, get_sensor_byID, get_all_sensor_data,
-                                                           delete_sensor_byID, update_sensor_byID,
-                                                           delete_all_sensor_data, get_last_20_sensor_data)
+                                                   delete_sensor_byID, update_sensor_byID,
+                                                   delete_all_sensor_data, get_last_20_sensor_data,
+                                                   get_last_sensor_data)
 
 
 def get_router(sensores_collection):
@@ -52,6 +53,15 @@ def get_router(sensores_collection):
         else:
             return []
 
+    # Leer el último registro
+    @router.get("/sensores/get/last", response_model=InvernaderoDataModel)
+    def read_last_sensor_data():
+        sensor_data = get_last_sensor_data(sensores_collection)
+        if sensor_data:
+            return sensor_data
+        else:
+            raise HTTPException(status_code=404, detail="No se encontraron registros de sensores")
+  
     # Eliminar registro por ID
     @router.delete("/sensores/{sensor_id}", response_model=dict)
     def delete_sensor(sensor_id: str):
