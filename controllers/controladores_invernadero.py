@@ -1,6 +1,6 @@
 from pymongo.errors import PyMongoError
 from pymongo.collection import Collection
-from typing import List
+from typing import List, Type
 from pytz import timezone
 from datetime import datetime
 from models.modelo_invernadero import InvernaderoDataModel
