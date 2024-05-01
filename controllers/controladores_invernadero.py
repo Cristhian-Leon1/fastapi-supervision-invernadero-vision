@@ -99,7 +99,7 @@ def get_last_20_sensor_data(collection: Collection) -> List[InvernaderoDataModel
         print(e)
         return []
 
-# Leer el último registro
+# Leer el último registro bien
 def get_last_sensor_data(collection: Collection) -> InvernaderoDataModel | Type[InvernaderoDataModel]:
     try:
         sensor_data = collection.find().sort([("_id", -1)]).limit(1)[0]
